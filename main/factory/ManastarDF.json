@@ -1,0 +1,9 @@
+{
+	"name": "ManastarDF",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "6f8c82b2-ca29-4512-b88f-d7076727d1d1",
+		"tenantId": "b67129f2-c591-4816-b477-d36868369309"
+	}
+}
