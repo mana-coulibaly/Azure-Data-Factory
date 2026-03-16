@@ -1,0 +1,14 @@
+{
+	"name": "OutputBlobSQL",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "manadfdatabase.database.windows.net",
+			"database": "free-sql-db-0164459",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SystemAssignedManagedIdentity"
+		}
+	}
+}
