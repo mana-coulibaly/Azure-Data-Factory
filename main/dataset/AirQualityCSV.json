@@ -1,0 +1,99 @@
+{
+	"name": "AirQualityCSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "blobStorage/datasets-demo/demo"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "AirQualityUCI_imputed_with_NO2mean.csv",
+				"container": "input"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Date",
+				"type": "String"
+			},
+			{
+				"name": "Time",
+				"type": "String"
+			},
+			{
+				"name": "CO(GT)",
+				"type": "String"
+			},
+			{
+				"name": "PT08.S1(CO)",
+				"type": "String"
+			},
+			{
+				"name": "NMHC(GT)",
+				"type": "String"
+			},
+			{
+				"name": "C6H6(GT)",
+				"type": "String"
+			},
+			{
+				"name": "PT08.S2(NMHC)",
+				"type": "String"
+			},
+			{
+				"name": "NOx(GT)",
+				"type": "String"
+			},
+			{
+				"name": "PT08.S3(NOx)",
+				"type": "String"
+			},
+			{
+				"name": "NO2(GT)",
+				"type": "String"
+			},
+			{
+				"name": "PT08.S4(NO2)",
+				"type": "String"
+			},
+			{
+				"name": "PT08.S5(O3)",
+				"type": "String"
+			},
+			{
+				"name": "T",
+				"type": "String"
+			},
+			{
+				"name": "RH",
+				"type": "String"
+			},
+			{
+				"name": "AH",
+				"type": "String"
+			},
+			{
+				"name": "Datetime",
+				"type": "String"
+			},
+			{
+				"name": "NO2_24h_mean",
+				"type": "String"
+			},
+			{
+				"name": "Qualite_Air_24h",
+				"type": "String"
+			}
+		]
+	}
+}

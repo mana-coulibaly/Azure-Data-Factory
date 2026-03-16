@@ -1,0 +1,113 @@
+{
+	"name": "AirQuality",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OutputBlobSQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "blobStorage/datasets-demo/demo"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Date",
+				"type": "date"
+			},
+			{
+				"name": "Time",
+				"type": "time",
+				"scale": 0
+			},
+			{
+				"name": "CO(GT)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PT08.S1(CO)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NMHC(GT)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "C6H6(GT)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PT08.S2(NMHC)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NOx(GT)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PT08.S3(NOx)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NO2(GT)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PT08.S4(NO2)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PT08.S5(O3)",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "T",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "RH",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "AH",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "Datetime",
+				"type": "datetime2",
+				"scale": 0
+			},
+			{
+				"name": "NO2_24h_mean",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "Qualite_Air_24h",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "AirQualityInput"
+		}
+	}
+}
