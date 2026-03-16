@@ -10,6 +10,18 @@
 		"AzureBlobStorage1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"InputBlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'InputBlobStorage'"
+		},
+		"OutputBlobSQL_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "manadfdatabase.database.windows.net"
+		},
+		"OutputBlobSQL_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "free-sql-db-0164459"
 		}
 	},
 	"variables": {
@@ -17,7 +29,196 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_abs_csv')]",
+			"name": "[concat(parameters('factoryName'), '/Blob to SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "AirQualityCSVtoSQL",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AirQualityCSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AirQuality",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AirQualityCSV')]",
+				"[concat(variables('factoryId'), '/datasets/AirQuality')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AirQuality')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OutputBlobSQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blobStorage/datasets-demo/demo"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Date",
+						"type": "date"
+					},
+					{
+						"name": "Time",
+						"type": "time",
+						"scale": 0
+					},
+					{
+						"name": "CO(GT)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "PT08.S1(CO)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "NMHC(GT)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "C6H6(GT)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "PT08.S2(NMHC)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "NOx(GT)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "PT08.S3(NOx)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "NO2(GT)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "PT08.S4(NO2)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "PT08.S5(O3)",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "T",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "RH",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "AH",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Datetime",
+						"type": "datetime2",
+						"scale": 0
+					},
+					{
+						"name": "NO2_24h_mean",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Qualite_Air_24h",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "AirQualityInput"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/OutputBlobSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AirQualityCSV')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -32,14 +233,89 @@
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation"
+						"type": "AzureBlobStorageLocation",
+						"fileName": "AirQualityUCI_imputed_with_NO2mean.csv",
+						"container": "input"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": []
+				"schema": [
+					{
+						"name": "Date",
+						"type": "String"
+					},
+					{
+						"name": "Time",
+						"type": "String"
+					},
+					{
+						"name": "CO(GT)",
+						"type": "String"
+					},
+					{
+						"name": "PT08.S1(CO)",
+						"type": "String"
+					},
+					{
+						"name": "NMHC(GT)",
+						"type": "String"
+					},
+					{
+						"name": "C6H6(GT)",
+						"type": "String"
+					},
+					{
+						"name": "PT08.S2(NMHC)",
+						"type": "String"
+					},
+					{
+						"name": "NOx(GT)",
+						"type": "String"
+					},
+					{
+						"name": "PT08.S3(NOx)",
+						"type": "String"
+					},
+					{
+						"name": "NO2(GT)",
+						"type": "String"
+					},
+					{
+						"name": "PT08.S4(NO2)",
+						"type": "String"
+					},
+					{
+						"name": "PT08.S5(O3)",
+						"type": "String"
+					},
+					{
+						"name": "T",
+						"type": "String"
+					},
+					{
+						"name": "RH",
+						"type": "String"
+					},
+					{
+						"name": "AH",
+						"type": "String"
+					},
+					{
+						"name": "Datetime",
+						"type": "String"
+					},
+					{
+						"name": "NO2_24h_mean",
+						"type": "String"
+					},
+					{
+						"name": "Qualite_Air_24h",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
@@ -54,6 +330,36 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InputBlobStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('InputBlobStorage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OutputBlobSQL')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('OutputBlobSQL_properties_typeProperties_server')]",
+					"database": "[parameters('OutputBlobSQL_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SystemAssignedManagedIdentity"
 				}
 			},
 			"dependsOn": []
